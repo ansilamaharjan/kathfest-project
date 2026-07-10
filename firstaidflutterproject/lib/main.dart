@@ -7,29 +7,16 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'First Aid App',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFC0392B)),
+        scaffoldBackgroundColor: const Color(0xFFFBE9DA),
+        fontFamily: 'Roboto',
+        useMaterial3: true,
       ),
       home: const MyHomePage(title: 'First Aid Assistant App'),
     );
@@ -39,15 +26,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -55,65 +33,349 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _currentIndex = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  // Quick access grid items: label, icon
+  final List<_QuickAccessItem> _quickAccessItems = const [
+    _QuickAccessItem('CPR', Icons.favorite_border),
+    _QuickAccessItem('Bleeding', Icons.water_drop_outlined),
+    _QuickAccessItem('Burns', Icons.local_fire_department_outlined),
+    _QuickAccessItem('Choking', Icons.airline_seat_flat_outlined),
+    _QuickAccessItem('Fainting', Icons.airline_seat_individual_suite_outlined),
+    _QuickAccessItem('Fracture', Icons.check_circle_outline),
+    _QuickAccessItem('Snake Bite', Icons.pets_outlined),
+    _QuickAccessItem('Electric Shock', Icons.bolt_outlined),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+      backgroundColor: const Color(0xFFFBE9DA),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 12),
+              _buildTopBar(),
+              const SizedBox(height: 28),
+              _buildHeading(),
+              const SizedBox(height: 20),
+              _buildEmergencyButton(),
+              const SizedBox(height: 28),
+              _buildQuickAccessHeader(),
+              const SizedBox(height: 16),
+              _buildQuickAccessGrid(),
+              const SizedBox(height: 20),
+              _buildSafetyTipCard(),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      bottomNavigationBar: _buildBottomNav(),
+    );
+  }
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-
-          children: [
-            const SizedBox(height: 40),
-
-            const Text(
-              "First Aid Assistant",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 12),
-
-            const Text(
-              "What emergency do you need help with today?",
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+  // ---------- Top bar ----------
+  Widget _buildTopBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'FirstAid+',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF1A1A1A),
+          ),
+        ),
+        Row(
+          children: const [
+            Icon(Icons.search, size: 26, color: Color(0xFF1A1A1A)),
+            SizedBox(width: 18),
+            Icon(
+              Icons.account_circle_outlined,
+              size: 28,
+              color: Color(0xFF1A1A1A),
             ),
           ],
         ),
-      ),
+      ],
+    );
+  }
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+  // ---------- Heading ----------
+  Widget _buildHeading() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Stay Calm. Help is Always\nAvailable.',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            height: 1.2,
+            color: Color(0xFF1A1A1A),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            const Text(
+              'Offline Emergency Assistance',
+              style: TextStyle(fontSize: 15, color: Colors.grey),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE6E1DC),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.check_circle, size: 12, color: Colors.black87),
+                  SizedBox(width: 4),
+                  Text(
+                    'OFFLINE READY',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // ---------- Emergency button ----------
+  Widget _buildEmergencyButton() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () {
+          // TODO: navigate to emergency help flow
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 28),
+          decoration: BoxDecoration(
+            color: const Color(0xFFC0272D),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFC0272D).withOpacity(0.35),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: const Column(
+            children: [
+              Icon(Icons.emergency_outlined, color: Colors.white, size: 30),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('🚨', style: TextStyle(fontSize: 18)),
+                  SizedBox(width: 8),
+                  Text(
+                    'EMERGENCY HELP',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ---------- Quick access ----------
+  Widget _buildQuickAccessHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'Quick Access',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        TextButton(
+          onPressed: () {},
+          child: const Text(
+            'View All',
+            style: TextStyle(
+              color: Color(0xFFC0272D),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickAccessGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _quickAccessItems.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.05,
+      ),
+      itemBuilder: (context, index) {
+        final item = _quickAccessItems[index];
+        return _QuickAccessCard(item: item);
+      },
+    );
+  }
+
+  // ---------- Safety tip ----------
+  Widget _buildSafetyTipCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF101B3D),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF4A259),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.lightbulb,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text(
+                "Today's Safety Tip",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            '"Never pour ice directly onto burns"',
+            style: TextStyle(
+              color: Colors.white70,
+              fontStyle: FontStyle.italic,
+              fontSize: 15,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------- Bottom nav ----------
+  Widget _buildBottomNav() {
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      onTap: (index) => setState(() => _currentIndex = index),
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.white,
+      selectedItemColor: const Color(0xFFC0272D),
+      unselectedItemColor: Colors.black54,
+      showUnselectedLabels: true,
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.medical_services_outlined),
+          label: 'First Aid',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.assignment_outlined),
+          label: 'Assessment',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.emergency_outlined),
+          label: 'Emergency',
+        ),
+      ],
+    );
+  }
+}
+
+class _QuickAccessItem {
+  final String label;
+  final IconData icon;
+  const _QuickAccessItem(this.label, this.icon);
+}
+
+class _QuickAccessCard extends StatelessWidget {
+  final _QuickAccessItem item;
+  const _QuickAccessCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0xFFFDF3E9),
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () {},
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF6E4E4),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  item.icon,
+                  color: const Color(0xFFC0272D),
+                  size: 22,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                item.label,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1A1A1A),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
