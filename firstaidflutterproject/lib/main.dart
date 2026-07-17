@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/homepage.dart';
-// import 'screens/contact.dart'; // Only use this when testing ContactScreen
+import 'screens/main_nav.dart'; // adjust path to wherever this file actually lives
 
 void main() {
   runApp(const MyApp());
@@ -17,10 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-
-      // Change this when testing different pages
-      home: const HomeScreen(),
-      // home: const ContactScreen(),
+      home: const MainNavScreen(),
     );
   }
 }
